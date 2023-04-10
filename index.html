@@ -88,7 +88,7 @@
                     onSubmit: function (api) {
                         let text = document.getElementById('tinyMCE-MathLiveEquationEditor').getValue();
                         if (needToAddPair) {
-                            text = '/( ' + text + ' /)';
+                            text = ' /( ' + text + ' /) ';
                         }
                         editor.selection.setContent(text, { format: 'text' })
                         api.close();
