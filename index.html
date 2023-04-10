@@ -1,123 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-    <script defer src="//unpkg.com/mathlive"></script>
+
 
     <script>
 
-    tinymce.PluginManager.add('MathsLiveEquationEditor', function(editor, url) {
-    var openDialog = function () {
-        return editor.windowManager.open({
-        title: 'Example plugin',
-        body: {
-            type: 'panel',
-            items: [
-            {
-                type: 'input',
-                name: 'title',
-                label: 'Title'
-            }
-            ]
-        },
-        buttons: [
-            {
-            type: 'cancel',
-            text: 'Close'
-            },
-            {
-            type: 'submit',
-            text: 'Save',
-            primary: true
-            }
-        ],
-        onSubmit: function (api) {
-            var data = api.getData();
-            /* Insert content when the window form is submitted */
-            editor.insertContent('Title: ' + data.title);
-            api.close();
-        }
-        });
-    };
-    /* Add a button that opens a window */
-    editor.ui.registry.addButton('example', {
-        text: 'My button',
-        onAction: function () {
-        /* Open window */
-        openDialog();
-        }
-    });
-    /* Adds a menu item, which can then be included in any menu via the menu/menubar configuration */
-    editor.ui.registry.addMenuItem('example', {
-        text: 'Example plugin',
-        onAction: function() {
-        /* Open window */
-        openDialog();
-        }
-    });
-    /* Return the metadata for the help plugin */
-    return {
-        getMetadata: function () {
-        return  {
-            name: 'Example plugin',
-            url: 'http://exampleplugindocsurl.com'
-        };
-        }
-    };
-    });
+        tinymce.PluginManager.add('MathLiveEquationEditor', function (editor, url) {
+            var openDialog = function () {
+                // Returns the currently selected element or the common ancestor element for both start and end of the selection.
+                //const node = editor.selection.getNode();
+                const range = editor.selection.getRng();
+                const selection = editor.selection.getSel();
 
-    /*
-    The following is an example of how to use the new plugin and the new
-    toolbar button.
-    */
-    tinymce.init({
-    selector: '#mytextarea',
-    plugins: 'MathsLiveEquationEditor',
-    toolbar: 'example | help'
-    });
+                let needToAddPair = false;
 
-    /*
+                console.log(range.startContainer.textContent);
+                console.log(range.endContainer.textContent)
 
-      tinymce.init({
-        selector: '#mytextarea',
-        custom_elements : 'math-field',
-        extended_valid_elements : 'math-field',
-        setup : function(ed) {
-            ed.on('init',function(){
-                var head = ed.dom.select('head')[0]
-                ed.dom.add(
-                    head,
-                    'script',
-                    {
-                        src: "https://unpkg.com/mathlive",
-                        type: 'text/javascript'
+                // Check if there is a /( /) pair in the selection
+                let startPair = range.startContainer.textContent.indexOf('/(', range.startOffset)
+                let endPair = range.endContainer.textContent.lastIndexOf('/)', range.endOffset)
+                // If there is a pair, then select the content between the pair
+                if (startPair != -1 && endPair != -1 && startPair < endPair) {
+                    range.setStart(range.startContainer, startPair + 2)
+                    range.setEnd(range.endContainer, endPair)
+                    selection.removeAllRanges()
+                    selection.addRange(range)
+                } else {
+                    if (startPair != -1) {
+                        // Only the start pair is selected
+                        // We need to find the last pair after the selection
+                        endPair = range.endContainer.textContent.indexOf('/)', range.endOffset)
+                    } else if (endPair != -1) {
+                        // Only the end pair is selected
+                        // We need to find the first pair before the selection
+                        startPair = range.startContainer.textContent.lastIndexOf('/(', range.startOffset)
+                    } else {
+                        // There is no pair, then select the content between the last pair before the selection and the first pair after the selection
+                        startPair = range.startContainer.textContent.lastIndexOf('/(', range.startOffset)
+                        endPair = range.endContainer.textContent.indexOf('/)', range.endOffset)
                     }
-                );
-                var scriptLoader = new tinymce.dom.ScriptLoader();
-                scriptLoader.add("https://unpkg.com/mathlive");
-                scriptLoader.loadQueue();
-                // tinymce.ScriptLoader.load('https://unpkg.com/mathlive');
+                    if (startPair != -1 && endPair != -1) {
+                        range.setStart(range.startContainer, startPair + 2)
+                        range.setEnd(range.endContainer, endPair)
+                        selection.removeAllRanges()
+                        selection.addRange(range)
+                    }
+                    else {
+                        needToAddPair = true;
+                    }
+                }
+
+
+
+                return editor.windowManager.open({
+                    title: 'Maths Live Equation Editor',
+                    body: {
+                        type: 'panel',
+                        items: [
+                            {
+                                type: 'htmlpanel',
+                                html: '<math-field id="tinyMCE-MathLiveEquationEditor">' + editor.selection.getContent({ format: 'text' }) + '</math-field><style>.ML__keyboard{z-index:1301;}</style>'
+                            }
+                        ]
+                    },
+                    buttons: [
+                        {
+                            type: 'cancel',
+                            text: 'Close'
+                        },
+                        {
+                            type: 'submit',
+                            text: 'Save',
+                            primary: true
+                        }
+                    ],
+                    onSubmit: function (api) {
+                        let text = ' ' + document.getElementById('tinyMCE-MathLiveEquationEditor').getValue() + ' '
+                        if (needToAddPair) {
+                            text = '/(' + text + '/)';
+                        }
+                        editor.selection.setContent(text, { format: 'text' })
+                        api.close();
+                    }
+                });
+            };
+            /* Add a button that opens a window */
+            editor.ui.registry.addButton('MathLiveEquationEditor', {
+                text: 'Equation Editor',
+                onAction: function () {
+                    /* Open window */
+                    openDialog();
+                }
             });
-        }
-      });
-      */
+            /* Adds a menu item, which can then be included in any menu via the menu/menubar configuration */
+            editor.ui.registry.addMenuItem('MathLiveEquationEditor', {
+                text: 'Equation Editor',
+                onAction: function () {
+                    /* Open window */
+                    openDialog();
+                }
+            });
+            /* Return the metadata for the help plugin */
+            return {
+                getMetadata: function () {
+                    return {
+                        name: 'Example plugin',
+                        url: 'http://exampleplugindocsurl.com'
+                    };
+                }
+            };
+        });
+
+        /*
+        The following is an example of how to use the new plugin and the new
+        toolbar button.
+        */
+        tinymce.init({
+            selector: '#mytextarea',
+            plugins: 'MathLiveEquationEditor',
+            toolbar: 'MathLiveEquationEditor | help',
+            setup: function (ed) {
+                tinymce.ScriptLoader.load('https://unpkg.com/mathlive');
+            }
+        });
+
+        /*
+    
+          tinymce.init({
+            selector: '#mytextarea',
+            custom_elements : 'math-field',
+            extended_valid_elements : 'math-field',
+            setup : function(ed) {
+                ed.on('init',function(){
+                    var head = ed.dom.select('head')[0]
+                    ed.dom.add(
+                        head,
+                        'script',
+                        {
+                            src: "https://unpkg.com/mathlive",
+                            type: 'text/javascript'
+                        }
+                    );
+                    var scriptLoader = new tinymce.dom.ScriptLoader();
+                    scriptLoader.add("https://unpkg.com/mathlive");
+                    scriptLoader.loadQueue();
+                    // tinymce.ScriptLoader.load('https://unpkg.com/mathlive');
+                });
+            }
+          });
+          */
     </script>
 
-  </head>
+</head>
 
-  <body>
-  <h1>TinyMCE Quick Start Guide</h1>
+<body>
+    <h1>TinyMCE Quick Start Guide</h1>
     <form method="post">
-      <textarea id="mytextarea">Hello, World!
+        <textarea id="mytextarea">Hello, World!
 
-        <math-field>f(x) = \sin(x+\pi)</math-field>
+        /( <math-field>f(x) = \sin(x+\pi)</math-field> /)
 
         Bye !
 
       </textarea>
     </form>
-  </body>
+</body>
+
 </html>
