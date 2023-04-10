@@ -97,7 +97,9 @@ tinymce.PluginManager.add('MathLiveEquationEditor', function (editor, url) {
         }
     });
 
-    tinymce.ScriptLoader.load('https://unpkg.com/mathlive');
+    var scriptLoader = new tinymce.dom.ScriptLoader();
+    scriptLoader.add("https://unpkg.com/mathlive");
+    scriptLoader.loadQueue();
 
     /* Return the metadata for the help plugin */
     return {
