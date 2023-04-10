@@ -36,6 +36,7 @@ tinymce.PluginManager.add('MathLiveEquationEditor', function (editor, url) {
                 range.setEnd(range.endContainer, endPair)
             }
             else {
+                // We will add /( and /) around the selected text
                 needToAddPair = true;
             }
         }
