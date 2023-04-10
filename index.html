@@ -26,17 +26,15 @@
                 let startPair = range.startContainer.textContent.indexOf('/(', range.startOffset)
                 let endPair = range.endContainer.textContent.lastIndexOf('/)', range.endOffset)
                 // If there is a pair, then select the content between the pair
-                if (startPair != -1 && endPair != -1 && startPair < endPair) {
+                if (startPair !== -1 && endPair !== -1 && startPair <= endPair) {
                     range.setStart(range.startContainer, startPair + 2)
                     range.setEnd(range.endContainer, endPair)
-                    selection.removeAllRanges()
-                    selection.addRange(range)
                 } else {
-                    if (startPair != -1) {
+                    if (startPair !== -1) {
                         // Only the start pair is selected
                         // We need to find the last pair after the selection
                         endPair = range.endContainer.textContent.indexOf('/)', range.endOffset)
-                    } else if (endPair != -1) {
+                    } else if (endPair !== -1) {
                         // Only the end pair is selected
                         // We need to find the first pair before the selection
                         startPair = range.startContainer.textContent.lastIndexOf('/(', range.startOffset)
@@ -45,17 +43,24 @@
                         startPair = range.startContainer.textContent.lastIndexOf('/(', range.startOffset)
                         endPair = range.endContainer.textContent.indexOf('/)', range.endOffset)
                     }
-                    if (startPair != -1 && endPair != -1) {
+                    if (startPair !== -1 && endPair !== -1) {
                         range.setStart(range.startContainer, startPair + 2)
                         range.setEnd(range.endContainer, endPair)
-                        selection.removeAllRanges()
-                        selection.addRange(range)
                     }
                     else {
                         needToAddPair = true;
                     }
                 }
-
+                if (startPair !== -1 && endPair !== -1) {
+                    if (range.toString().startsWith(' ')) {
+                        range.setStart(range.startContainer, startPair + 3)
+                    }
+                    if (range.toString().endsWith(' ')) {
+                        range.setEnd(range.endContainer, endPair - 1)
+                    }
+                }
+                selection.removeAllRanges()
+                selection.addRange(range)
 
 
                 return editor.windowManager.open({
@@ -81,9 +86,9 @@
                         }
                     ],
                     onSubmit: function (api) {
-                        let text = ' ' + document.getElementById('tinyMCE-MathLiveEquationEditor').getValue() + ' '
+                        let text = document.getElementById('tinyMCE-MathLiveEquationEditor').getValue();
                         if (needToAddPair) {
-                            text = '/(' + text + '/)';
+                            text = '/( ' + text + ' /)';
                         }
                         editor.selection.setContent(text, { format: 'text' })
                         api.close();
