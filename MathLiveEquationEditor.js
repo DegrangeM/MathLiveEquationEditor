@@ -86,22 +86,17 @@ tinymce.PluginManager.add('MathLiveEquationEditor', function (editor, url) {
             }
         });
     };
+
     /* Add a button that opens a window */
     editor.ui.registry.addButton('MathLiveEquationEditor', {
         text: 'Equation Editor',
-        onAction: function () {
-            /* Open window */
-            openDialog();
-        }
+        onAction: openDialog
     });
     /* Adds a menu item, which can then be included in any menu via the menu/menubar configuration */
     editor.ui.registry.addMenuItem('MathLiveEquationEditor', {
         // text: editor.translate('Equation Editor'),
         text: 'Equation Editor',
-        onAction: function () {
-            /* Open window */
-            openDialog();
-        }
+        onAction: openDialog
     });
 
     var scriptLoader = new tinymce.dom.ScriptLoader();
