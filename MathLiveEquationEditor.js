@@ -1,7 +1,5 @@
 tinymce.PluginManager.add('MathLiveEquationEditor', function (editor, url) {
     var openDialog = function () {
-        // Returns the currently selected element or the common ancestor element for both start and end of the selection.
-        //const node = editor.selection.getNode();
         const range = editor.selection.getRng();
         const selection = editor.selection.getSel();
 
