@@ -54,7 +54,14 @@ tinymce.PluginManager.add('MathLiveEquationEditor', function (editor, url) {
                 items: [
                     {
                         type: 'htmlpanel',
-                        html: '<math-field id="tinyMCE-MathLiveEquationEditor">' + editor.selection.getContent({ format: 'text' }) + '</math-field><style>.ML__keyboard{z-index:1301;}</style>'
+                        html: '<math-field id="tinyMCE-MathLiveEquationEditor">' + editor.selection.getContent({ format: 'text' }) + '</math-field>' +
+                            '<style>' +
+                            '.ML__keyboard{z-index:1301;}' + // Put the keyboard above the modal
+                            '#tinyMCE-MathLiveEquationEditor{' +
+                            'min-width: 200px;' + // Custom css to Avoid strange UI when no formula
+                            // TinyMCE destroy the mathfield css, we need to restore it ;(
+                            'background-color: field;color: fieldtext;border-width: 1px;border-style: solid;border-color: #acacac;padding: 4px;' +
+                            '}</style>'
                     }
                 ]
             },
