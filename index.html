@@ -9,48 +9,16 @@
 
 
     <script>
-
-        /*
-        The following is an example of how to use the new plugin and the new
-        toolbar button.
-        */
         tinymce.init({
             selector: '#mytextarea',
             plugins: 'MathLiveEquationEditor',
             toolbar: 'MathLiveEquationEditor | help',
+            // language: 'fr_FR',
             external_plugins: {
                 MathLiveEquationEditor: '/MathLiveEquationEditor.js'
-            },
-            setup: function (ed) {
-                tinymce.ScriptLoader.load('https://unpkg.com/mathlive');
             }
         });
 
-        /*
-    
-          tinymce.init({
-            selector: '#mytextarea',
-            custom_elements : 'math-field',
-            extended_valid_elements : 'math-field',
-            setup : function(ed) {
-                ed.on('init',function(){
-                    var head = ed.dom.select('head')[0]
-                    ed.dom.add(
-                        head,
-                        'script',
-                        {
-                            src: "https://unpkg.com/mathlive",
-                            type: 'text/javascript'
-                        }
-                    );
-                    var scriptLoader = new tinymce.dom.ScriptLoader();
-                    scriptLoader.add("https://unpkg.com/mathlive");
-                    scriptLoader.loadQueue();
-                    // tinymce.ScriptLoader.load('https://unpkg.com/mathlive');
-                });
-            }
-          });
-          */
     </script>
 
 </head>

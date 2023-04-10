@@ -94,6 +94,7 @@ tinymce.PluginManager.add('MathLiveEquationEditor', function (editor, url) {
     });
     /* Adds a menu item, which can then be included in any menu via the menu/menubar configuration */
     editor.ui.registry.addMenuItem('MathLiveEquationEditor', {
+        // text: editor.translate('Equation Editor'),
         text: 'Equation Editor',
         onAction: function () {
             /* Open window */
@@ -113,3 +114,4 @@ tinymce.PluginManager.add('MathLiveEquationEditor', function (editor, url) {
         }
     };
 });
+// tinymce.PluginManager.requireLangPack('MathLiveEquationEditor', 'fr_FR');
