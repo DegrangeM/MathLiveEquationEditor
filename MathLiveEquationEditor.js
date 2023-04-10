@@ -7,9 +7,6 @@ tinymce.PluginManager.add('MathLiveEquationEditor', function (editor, url) {
 
         let needToAddPair = false;
 
-        console.log(range.startContainer.textContent);
-        console.log(range.endContainer.textContent)
-
         // Check if there is a /( /) pair in the selection
         let startPair = range.startContainer.textContent.indexOf('/(', range.startOffset)
         let endPair = range.endContainer.textContent.lastIndexOf('/)', range.endOffset)
