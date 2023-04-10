@@ -106,7 +106,7 @@ tinymce.PluginManager.add('MathLiveEquationEditor', function (editor, url) {
     return {
         getMetadata: function () {
             return {
-                name: 'Example plugin',
+                name: 'MathLiveEquationEditor',
                 url: 'http://exampleplugindocsurl.com'
             };
         }
